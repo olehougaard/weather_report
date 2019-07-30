@@ -140,3 +140,6 @@ The server implements a web socket on ws://localhost:8090/warnings. It accepts t
 
 ### `"subscribe"`
 This subscribes to the warnings. As soon as possible after the subscribtion the server will send a list of current warnings in the format described under `GET /warnings`. After this, the server will send an update everytime a warning has changed, or a new warning has happened. The format is as described under `GET /warnings/id`
+
+### `"unsubscribe"`
+The server will stop sending messages. No confirmation is send.
