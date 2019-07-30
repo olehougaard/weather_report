@@ -36,6 +36,9 @@ This returns all historical data as a JSON array. The format is as follows:
 #### `GET /data/<place>`
 This returns the data only for the given place. I.e. GET /data/Horsens returns the data for Horsens in the same format as above.
 
+#### `POST /data`
+Adds historical weather data. The data should be the same format as returned by GET.
+
 #### `GET /forecast`
 
 This returns all predictions as a JSON array. The format is as follows:
