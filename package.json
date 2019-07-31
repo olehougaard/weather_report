@@ -1,0 +1,22 @@
+{
+  "name": "weather_report",
+  "version": "0.1.0",
+  "description": "Weather report server serving fake data",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/olehougaard/weather_report.git"
+  },
+  "author": "Ole Ildsgaard Hougaard",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/olehougaard/weather_report/issues"
+  },
+  "homepage": "https://github.com/olehougaard/weather_report#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
