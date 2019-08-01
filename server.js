@@ -2,7 +2,7 @@ const express = require('express')
 const body_parser = require('body-parser')
 const generator = require('./model/generate.js')
 const { alert } = require('./model/model.js')
-const { partition } = require('./util/utils.js')
+const { partition, findLast } = require('./util/utils.js')
 
 const app = express()
 app.use(body_parser.json())
@@ -24,7 +24,7 @@ const start_time = new Date()
 const data = generator.generate_historic_data(start_time)
 let forecast = generator.generate_forecast(start_time)
 const alerts = create_alerts(forecast)
-let historic_alerts = { [ start_time.getTime() ]: alerts }
+let historic_alerts = { [ start_time.getTime() ]: alerts.slice() }
 
 const update_alerts = (forecast, time) => {
     const match_alerts = alerts.map((alert, idx) => ({ idx, new_prediction: forecast.find(alert.matches)}))
@@ -35,7 +35,7 @@ const update_alerts = (forecast, time) => {
     updated_alerts.forEach(({idx, new_prediction}) => alerts[idx] = alerts[idx].updated(new_prediction))
     alerts.push(...create_alerts(unalerted))
 
-    historic_alerts[time.getTime()] = alerts
+    historic_alerts[time.getTime()] = alerts.slice()
 }
 
 const regenerate_forecast = () => {
@@ -54,8 +54,7 @@ app.get('/data/:place', (req, res) => {
 })
 
 app.post('/data', (req, res) => {
-    const new_data = req.body
-    data.push(...new_data)
+    data.push(...req.body)
     res.status(201)
     res.send()
 })
@@ -80,6 +79,22 @@ app.get('/warnings/:id', (req, res) => {
         res.send(alert)
     else {
         res.status(404)
+        res.send()
+    }
+})
+
+app.get('/warnings/since/:time', (req, res) => {
+    const time = Date.parse(req.params.time)
+    if (time) {
+        const alert_time = findLast(t => t <= time)(Object.keys(historic_alerts))
+        if (alert_time) {
+            const old_alerts = historic_alerts[alert_time]
+            res.send(alerts.filter(a => !old_alerts.some(a.equals)))
+        } else {
+            res.send(alerts.filter(a => a.prediction))
+        }
+    } else {
+        res.status(400)
         res.send()
     }
 })

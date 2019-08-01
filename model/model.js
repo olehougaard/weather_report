@@ -1,3 +1,7 @@
+const equals = (...keys) => x => y => [].concat(...keys).every(k => (x[k] === null && y[k] === null) || (x[k].equals && x[k].equals(y[k]) || x[k] === y[k]))
+
+const with_equals = (...keys) => o => Object.assign({}, o, {equals: equals(...keys)(o)})
+
 const data_type = (type, unit) => properties => Object.assign({}, properties, {type, unit})
 
 const event = (time, place) => properties => Object.assign({}, properties, {time, place})
@@ -9,17 +13,20 @@ const precipitation_measurement = measurement(data_type('Precipitation', 'mm'))
 const wind_measurement = measurement(data_type('Wind', 'm/s'))
 const cloud_measurement = measurement(data_type('Cloud Coverage', '%'))
 
+const prediction_keys = ['time', 'place', 'type', 'unit', 'from', 'to']
+const prediction_equals = with_equals(prediction_keys)
+
 const temperature = (value, event) => temperature_measurement({value}, event)
-const temperature_prediction = ({from, to}, event) => temperature_measurement({from, to}, event)
+const temperature_prediction = ({from, to}, event) => prediction_equals(temperature_measurement({from, to}, event))
 
 const wind = (value, direction, event) => wind_measurement({value, direction}, event)
-const wind_prediction = ({from, to}, directions, event) => wind_measurement({from, to, directions}, event)
+const wind_prediction = ({from, to}, directions, event) => with_equals(prediction_keys.concat('directions'))(wind_measurement({from, to, directions}, event))
 
 const precipitation = (value, precipitation_type, event) => precipitation_measurement({value, precipitation_type}, event)
-const precipitation_prediction = ({from, to}, precipitation_type, event) => precipitation_measurement({from, to, precipitation_type}, event)
+const precipitation_prediction = ({from, to}, precipitation_type, event) => with_equals(prediction_keys.concat('precipitation_type'))(precipitation_measurement({from, to, precipitation_type}, event))
 
 const cloud = (value, event) => cloud_measurement({value}, event)
-const cloud_prediction = ({from, to}, event) => cloud_measurement({from, to}, event)
+const cloud_prediction = ({from, to}, event) => prediction_equals(cloud_measurement({from, to}, event))
 
 const alert = (id, severity, prediction) => {
     const create_alert = (id, severity, prediction) => {
@@ -39,7 +46,7 @@ const alert = (id, severity, prediction) => {
             }
             return create_alert(id, severity, prediction)
         }
-        return { id, severity, prediction, matches, cancelled, updated }
+        return with_equals('id', 'severity', 'prediction')({ id, severity, prediction, matches, cancelled, updated })
     }
     if (id < 1 || severity < 1 || !prediction || !prediction.time || !prediction.place || !prediction.type) throw 'Illegal parameters'
     return create_alert(id, severity, prediction)
