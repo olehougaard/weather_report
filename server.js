@@ -71,7 +71,7 @@ app.get('/forecast/:place', (req, res) => {
 })
 
 app.get('/warnings', (_, res) => {
-    res.send(alerts)
+    res.send(alerts.filter(a => a.prediction))
 })
 
 const web_service_port = 8080
