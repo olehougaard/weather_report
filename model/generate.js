@@ -41,7 +41,7 @@ const generate_predictions = event => [
     model.cloud_prediction(random_interval(coverages), event)
 ]
 
-const alertable = ({ type, to }) => type === 'Precipitation' && to >= 17 || type === 'Wind' && to >= 36
+const alertable = ({ type, to }) => (type === 'Precipitation' && to >= 17) || (type === 'Wind' && to >= 36)
 
 const generate_historic_times = date => hours_in_latest_week(beginning_of_day(date))
 const generate_historic_events = pipe(generate_historic_times, flatMap(time => places.map(place => model.event(time, place))))

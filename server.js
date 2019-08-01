@@ -1,9 +1,8 @@
 const express = require('express')
 const body_parser = require('body-parser')
-const dateformat = require('dateformat')
 const generator = require('./model/generate.js')
 const { alert } = require('./model/model.js')
-const { findIndeces } = require('./util/utils.js')
+const { partition } = require('./util/utils.js')
 
 const app = express()
 app.use(body_parser.json())
@@ -28,13 +27,11 @@ const alerts = create_alerts(forecast)
 let historic_alerts = { [ start_time.getTime() ]: alerts }
 
 const update_alerts = (forecast, time) => {
-    const cancelled_alert_idxs = findIndeces(a => !forecast.some(a.matches))(alerts)
-    const updated_alerts = alerts
-        .map((alert, idx) => ({ idx, new_prediction: forecast.find(alert.matches)}))
-        .filter(t => t.new_prediction)
+    const match_alerts = alerts.map((alert, idx) => ({ idx, new_prediction: forecast.find(alert.matches)}))
+    const { positive: updated_alerts, negative: cancelled_alerts } = partition(t => t.new_prediction && generator.alertable(t.new_prediction))(match_alerts)
     const unalerted = forecast.filter(p => !alerts.some(a => a.matches(p)))
 
-    cancelled_alert_idxs.forEach(idx => alerts[idx] = alerts[idx].cancelled())
+    cancelled_alerts.forEach(({idx}) => alerts[idx] = alerts[idx].cancelled())
     updated_alerts.forEach(({idx, new_prediction}) => alerts[idx] = alerts[idx].updated(new_prediction))
     alerts.push(...create_alerts(unalerted))
 
@@ -71,6 +68,10 @@ app.get('/forecast', (_, res) => {
 app.get('/forecast/:place', (req, res) => {
     regenerate_forecast()
     res.send(forecast.filter(({place}) => place === req.params.place))
+})
+
+app.get('/warnings', (_, res) => {
+    res.send(alerts)
 })
 
 const web_service_port = 8080
