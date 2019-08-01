@@ -81,7 +81,7 @@ This returns the predictions only for the given place. I.e. GET /forecast/Horsen
 #### `GET /warnings`
 This returns warnings connected to the weather predictions. The format is as follows:
 ```
-{"time": "2019/07/31 8:02:24",
+{"time": "2019/07/31T8:02:24.000Z",
  "warnings": [
    {"id": 117,
     "severity": 2,

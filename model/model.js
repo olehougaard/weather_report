@@ -8,10 +8,10 @@ const event = (time, place) => properties => Object.assign({}, properties, {time
 
 const measurement = data_type => (object, event) => Object.assign(Object.create({event: () => event}), event(data_type(object)))
 
-const temperature_measurement = measurement(data_type('Temperature', 'C'))
-const precipitation_measurement = measurement(data_type('Precipitation', 'mm'))
-const wind_measurement = measurement(data_type('Wind', 'm/s'))
-const cloud_measurement = measurement(data_type('Cloud Coverage', '%'))
+const temperature_measurement = measurement(data_type('temperature', 'C'))
+const precipitation_measurement = measurement(data_type('precipitation', 'mm'))
+const wind_measurement = measurement(data_type('wind speed', 'm/s'))
+const cloud_measurement = measurement(data_type('cloud coverage', '%'))
 
 const prediction_keys = ['time', 'place', 'type', 'unit', 'from', 'to']
 const prediction_equals = with_equals(prediction_keys)
@@ -23,7 +23,7 @@ const wind = (value, direction, event) => wind_measurement({value, direction}, e
 const wind_prediction = ({from, to}, directions, event) => with_equals(prediction_keys.concat('directions'))(wind_measurement({from, to, directions}, event))
 
 const precipitation = (value, precipitation_type, event) => precipitation_measurement({value, precipitation_type}, event)
-const precipitation_prediction = ({from, to}, precipitation_type, event) => with_equals(prediction_keys.concat('precipitation_type'))(precipitation_measurement({from, to, precipitation_type}, event))
+const precipitation_prediction = ({from, to}, precipitation_types, event) => with_equals(prediction_keys.concat('precipitation_types'))(precipitation_measurement({from, to, precipitation_types}, event))
 
 const cloud = (value, event) => cloud_measurement({value}, event)
 const cloud_prediction = ({from, to}, event) => prediction_equals(cloud_measurement({from, to}, event))

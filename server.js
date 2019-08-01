@@ -45,6 +45,8 @@ const regenerate_forecast = () => {
     return forecast = new_forecast
 }
 
+const warnings = alerts => ({ time: new Date(), warnings: alerts })
+
 app.get('/data', (_, res) => {
     res.send(data)
 })
@@ -70,7 +72,7 @@ app.get('/forecast/:place', (req, res) => {
 })
 
 app.get('/warnings', (_, res) => {
-    res.send(alerts.filter(a => a.prediction))
+    res.send(warnings(alerts.filter(a => a.prediction)))
 })
 
 app.get('/warnings/:id', (req, res) => {
@@ -89,9 +91,9 @@ app.get('/warnings/since/:time', (req, res) => {
         const alert_time = findLast(t => t <= time)(Object.keys(historic_alerts))
         if (alert_time) {
             const old_alerts = historic_alerts[alert_time]
-            res.send(alerts.filter(a => !old_alerts.some(a.equals)))
+            res.send(warnings(alerts.filter(a => !old_alerts.some(a.equals))))
         } else {
-            res.send(alerts.filter(a => a.prediction))
+            res.send(warnings(alerts.filter(a => a.prediction)))
         }
     } else {
         res.status(400)
