@@ -13,28 +13,29 @@ Running the server will start a web service on `http://localhost:8080/` with the
 This returns all historical data as a JSON array. The format is as follows:
 ```
 [{"type": "temperature",
-  "time": "2019/07/30 10:07:00",
+  "time": "2019/07/30T10:07:00.000Z",
   "place": "Aarhus",
   "value": 21,
   "unit": "C"},
  {"type": "precipitation",
-  "time": "2019/07/30 10:07:00",
+  "time": "2019/07/30T10:07:00.000Z",
   "place": "Aarhus",
   "value": 0,
   "unit": "mm",
   "precipitation_type":"rain"},
  {"type": "wind speed",
-  "time": "2019/07/30 10:07:00",
+  "time": "2019/07/30T10:07:00.000Z",
   "place": "Aarhus",
   "value": 2,
   "unit": "m/s"
   "direction": "North"},
 {"type": "cloud coverage",
-  "time": "2019/07/30 10:07:00",
+  "time": "2019/07/30T10:07:00.000Z",
   "place": "Aarhus",
   "value": 100,
   "unit": "%"}]
   ```
+All dates are in UTC code and follows the ISO 8601 format.
 
 #### `GET /data/<place>`
 This returns the data only for the given place. I.e. GET /data/Horsens returns the data for Horsens in the same format as above.
@@ -47,27 +48,27 @@ Adds historical weather data. The data should be the same format as returned by 
 This returns all predictions as a JSON array. The format is as follows:
 ```
 [{"type": "temperature",
-  "time": "2019/07/31 10:07:00",
+  "time": "2019/07/31T10:07:00.000Z",
   "place": "Aarhus",
   "from": 19,
   "to": 22,
   "unit": "C"},
  {"type": "precipitation",
-  "time": "2019/07/31 10:07:00",
+  "time": "2019/07/31T10:07:00.000Z",
   "place": "Aarhus",
   "from": 0.0,
   "to": 0.5,
   "unit": "mm",
   "precipitation_types": ["rain"]},
  {"type": "wind speed",
-  "time": "2019/07/31 10:07:00",
+  "time": "2019/07/31T10:07:00.000Z",
   "place": "Aarhus",
   "from": 4,
   "to":6,
   "unit": "m/s",
   "directions": ["South", "Southwest"]},
 {"type": "cloud coverage",
-  "time": "2019/07/31 10:07:00",
+  "time": "2019/07/31T10:07:00.000Z",
   "place": "Aarhus",
   "from": 75,
   "to":100,
@@ -86,7 +87,7 @@ This returns warnings connected to the weather predictions. The format is as fol
     "severity": 2,
     "prediction": {
       "type": "precipitation",
-      "time": "2019/07/31 10:07:00",
+      "time": "2019/07/31T10:07:00.000Z",
       "place": "Aarhus",
       "from": 10.0,
       "to": 21.5,
@@ -98,7 +99,7 @@ This returns warnings connected to the weather predictions. The format is as fol
     "severity": 3, 
     "prediction":{
       "type": "wind speed",
-      "time": "2019/07/31 10:07:00",
+      "time": "2019/07/31T10:07:00.000Z",
       "place": "Aarhus",
       "from": 24,
       "to":36,
@@ -117,7 +118,7 @@ This returns the current status warning with the given id. The format is:
  "severity": 2,
  "prediction": {
    "type": "precipitation",
-   "time": "2019/07/31 10:07:00",
+   "time": "2019/07/31T10:07:00.000Z",
    "place": "Aarhus",
    "from": 10.0,
    "to": 21.5,
