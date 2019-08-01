@@ -35,7 +35,7 @@ This returns all historical data as a JSON array. The format is as follows:
   "value": 100,
   "unit": "%"}]
   ```
-All dates are in UTC code and follows the ISO 8601 format.
+All times are in UTC code and follows the ISO 8601 format.
 
 #### `GET /data/<place>`
 This returns the data only for the given place. I.e. GET /data/Horsens returns the data for Horsens in the same format as above.
@@ -136,7 +136,7 @@ If the warning has been cancelled, the service returns
   ```
 
 #### `GET /warnings/since/<time>`
-This returns the changes in warnings since the given time. The format is the same as `GET /warnings` except that cancelled warnings are send as the format described above under `GET /warnings/id`.
+This returns the changes in warnings since the given time. The format is the same as `GET /warnings` except that cancelled warnings are send as the format described above under `GET /warnings/id`. The time must be in UTC code and follow the ISO 8601 format.
 
 ### Web Socket
 The server implements a web socket on ws://localhost:8090/warnings. It accepts two messages.
