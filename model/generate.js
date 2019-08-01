@@ -53,7 +53,21 @@ const generate_forecast = pipe(generate_future_events, flatMap(generate_predicti
 const regenerate_forecast = forecast => pipe(generate_future_events, flatMap( event => {
     const { time, place } = event({})
     const existing_predictions = forecast.filter(p => p.time.getTime() === time.getTime() && p.place === place)
-    return (existing_predictions.length && Math.random() > .25) ? existing_predictions : generate_predictions(event)
+    const new_predictions = generate_predictions(event)
+    if (existing_predictions.length === 0)
+        return new_predictions
+    else
+        return existing_predictions.map ( p => {
+            const adjustment = .8 + Math.random() * .4
+            if (alertable(p) && Math.random() < 0.5)
+                return Object.assign({}, p, { from: p.from * adjustment, to: p.to * adjustment })
+            else if (Math.random() < .5)
+                return new_predictions.find( np => p.type === np.type)
+            else
+                return p
+        })
+    
+    //(existing_predictions.length && Math.random() < .75) ? existing_predictions : generate_predictions(event)
 }))
 
 module.exports = { generate_historic_data, generate_forecast, regenerate_forecast, alertable }
