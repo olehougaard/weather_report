@@ -21,4 +21,28 @@ const precipitation_prediction = ({from, to}, precipitation_type, event) => prec
 const cloud = (value, event) => cloud_measurement({value}, event)
 const cloud_prediction = ({from, to}, event) => cloud_measurement({from, to}, event)
 
-module.exports = {event, temperature, temperature_prediction, wind, wind_prediction, precipitation, precipitation_prediction, cloud, cloud_prediction}
+const alert = (id, severity, prediction) => {
+    const create_alert = (id, severity, prediction) => {
+        const matches = other_prediction => { 
+        return prediction && other_prediction && other_prediction.time && other_prediction.place && other_prediction.type &&
+                prediction.time.getTime() === other_predictiontime.getTime() && 
+                prediction.place === other_prediction.place && 
+                prediction.type === other_prediction.type
+        }
+        const cancelled = () => create_alert(id, 0, null)
+        const updated = other_prediction => {
+            if (matches(other_prediction)) {
+                if (other_prediction.to > prediction.to)
+                    return create_alert(id, severity + 1, other_prediction)
+                else if (other_prediction.to < prediction.to && severity > 1)
+                    return create_alert(id, severity - 1, other_prediction)
+            }
+            return create_alert(id, severity, prediction)
+        }
+        return { id, severity, prediction, matches, cancelled, updated }
+    }
+    if (id < 1 || severity < 1 || !prediction || !prediction.time || !prediction.place || !prediction.type) throw 'Illegal parameters'
+    return create_alert(id, severity, prediction)
+}
+
+module.exports = {event, temperature, temperature_prediction, wind, wind_prediction, precipitation, precipitation_prediction, cloud, cloud_prediction, alert}

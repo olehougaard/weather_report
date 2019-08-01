@@ -1,5 +1,5 @@
 const { pipe, flatMap } = require('../util/utils.js')
-const { beginning_of_day, beginning_of_hour, hours_after, next_24_hours, hours_in_latest_week } = require('../util/dates.js/index.js')
+const { beginning_of_day, beginning_of_hour, hours_after, next_24_hours, hours_in_latest_week } = require('../util/dates.js')
 
 const model = require('./model.js')
 
