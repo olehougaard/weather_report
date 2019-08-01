@@ -74,6 +74,16 @@ app.get('/warnings', (_, res) => {
     res.send(alerts.filter(a => a.prediction))
 })
 
+app.get('/warnings/:id', (req, res) => {
+    const alert = alerts.find(({id}) => id == req.params.id)
+    if (alert)
+        res.send(alert)
+    else {
+        res.status(404)
+        res.send()
+    }
+})
+
 const web_service_port = 8080
 
 app.listen(web_service_port, () => console.log("Server started on", web_service_port, "at", start_time.toString()))
