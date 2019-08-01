@@ -1,5 +1,6 @@
 const express = require('express')
 const body_parser = require('body-parser')
+const dateformat = require('dateformat')
 const generator = require('./model/generate.js')
 const { alert } = require('./model/model.js')
 const { findIndeces } = require('./util/utils.js')
@@ -65,6 +66,11 @@ app.post('/data', (req, res) => {
 app.get('/forecast', (_, res) => {
     regenerate_forecast()
     res.send(forecast)
+})
+
+app.get('/forecast/:place', (req, res) => {
+    regenerate_forecast()
+    res.send(forecast.filter(({place}) => place === req.params.place))
 })
 
 const web_service_port = 8080
