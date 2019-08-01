@@ -27,11 +27,11 @@ const alerts = create_alerts(forecast)
 let historic_alerts = { [ start_time.getTime() ]: alerts }
 
 const update_alerts = (forecast, time) => {
-    const cancelled_alert_idxs = findIndeces(a => !forecast.any(a.matches))(alerts)
+    const cancelled_alert_idxs = findIndeces(a => !forecast.some(a.matches))(alerts)
     const updated_alerts = alerts
         .map((alert, idx) => ({ idx, new_prediction: forecast.find(alert.matches)}))
         .filter(t => t.new_prediction)
-    const unalerted = forecast.filter(p => !alerts.any(a => a.matches(p)))
+    const unalerted = forecast.filter(p => !alerts.some(a => a.matches(p)))
 
     cancelled_alert_idxs.forEach(idx => alerts[idx] = alerts[idx].cancelled())
     updated_alerts.forEach(({idx, new_prediction}) => alerts[idx] = alerts[idx].updated(new_prediction))
@@ -60,6 +60,11 @@ app.post('/data', (req, res) => {
     data.push(...new_data)
     res.status(201)
     res.send()
+})
+
+app.get('/forecast', (_, res) => {
+    regenerate_forecast()
+    res.send(forecast)
 })
 
 const web_service_port = 8080

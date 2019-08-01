@@ -52,7 +52,7 @@ const generate_future_events = pipe(generate_future_times, flatMap(time => place
 const generate_forecast = pipe(generate_future_events, flatMap(generate_predictions))
 const regenerate_forecast = forecast => pipe(generate_future_events, flatMap( event => {
     const { time, place } = event({})
-    const existing_predictions = forecast.filter(p => p.time === time && p.place === place)
+    const existing_predictions = forecast.filter(p => p.time.getTime() === time.getTime() && p.place === place)
     return (existing_predictions.length && Math.random() > .25) ? existing_predictions : generate_predictions(event)
 }))
 

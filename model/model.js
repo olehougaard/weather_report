@@ -25,7 +25,7 @@ const alert = (id, severity, prediction) => {
     const create_alert = (id, severity, prediction) => {
         const matches = other_prediction => { 
         return prediction && other_prediction && other_prediction.time && other_prediction.place && other_prediction.type &&
-                prediction.time.getTime() === other_predictiontime.getTime() && 
+                prediction.time.getTime() === other_prediction.time.getTime() && 
                 prediction.place === other_prediction.place && 
                 prediction.type === other_prediction.type
         }
