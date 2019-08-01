@@ -51,6 +51,10 @@ app.get('/data', (_, res) => {
     res.send(data)
 })
 
+app.get('/data/:place', (req, res) => {
+    res.send(data.filter(({place}) => place === req.params.place))
+})
+
 const web_service_port = 8080
 
 app.listen(web_service_port, () => console.log("Server started on", web_service_port, "at", start_time.toString()))
