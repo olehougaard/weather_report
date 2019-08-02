@@ -1,8 +1,12 @@
 const express = require('express')
 const body_parser = require('body-parser')
+const WebSocket = require('ws')
 const generator = require('./model/generate.js')
 const { alert } = require('./model/model.js')
 const { partition, findLast } = require('./util/utils.js')
+
+const web_service_port = 8080
+const web_socket_port = 8090
 
 const app = express()
 app.use(body_parser.json())
@@ -12,6 +16,8 @@ app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Methods", "GET, POST, PATCH");
     next();
 });
+
+const wss = new WebSocket.Server({ port: web_socket_port, path: '/warnings' })
 
 let alert_id = 1
 const create_alerts = predictions => {
@@ -99,16 +105,45 @@ app.get('/warnings/since/:time', (req, res) => {
     }
 })
 
-const web_service_port = 8080
 const update_frequency_seconds = process.argv[2] || 600
 
 function update_periodically() {
     setTimeout(() => {
         regenerate_forecast()
         update_periodically()
+        const all_alerts = Object.values(historic_alerts)
+        const old_alerts = all_alerts[all_alerts.length - 2]
+        if (old_alerts) {
+            alerts
+                .filter(a => !old_alerts.some(a.equals))
+                .forEach(alert => 
+                    [...wss.clients]
+                        .filter(client => client.readyState === WebSocket.OPEN && client.subscribed)
+                        .forEach( client => client.send(JSON.stringify(alert)) )
+                )
+        }
     }, update_frequency_seconds * 1000)
 }
 
 update_periodically()
+
+wss.on('connection', (ws, req) => {
+    ws.on('message', message => {
+        switch(message) {
+            case 'subscribe':
+                if (!ws.subscribed) {
+                    ws.subscribed = true
+                    ws.send(JSON.stringify(warnings(alerts)))
+                }
+                break;
+            case 'unsubscribe':
+                ws.subscribed = false
+                break;
+            default:
+                console.error(`Incorrect message: '${message}' from ${req.connection.remoteAddress} (${req.connection.remoteFamily})`)
+        }
+    })
+    ws.on('close', () => ws.subscribed = false)
+})
 
 app.listen(web_service_port, () => console.log("Server started on", web_service_port, "at", start_time.toString()))
