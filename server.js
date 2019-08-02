@@ -62,12 +62,10 @@ app.post('/data', (req, res) => {
 })
 
 app.get('/forecast', (_, res) => {
-    regenerate_forecast()
     res.send(forecast)
 })
 
 app.get('/forecast/:place', (req, res) => {
-    regenerate_forecast()
     res.send(forecast.filter(({place}) => place === req.params.place))
 })
 
@@ -102,5 +100,15 @@ app.get('/warnings/since/:time', (req, res) => {
 })
 
 const web_service_port = 8080
+const update_frequency_seconds = process.argv[2] || 600
+
+function update_periodically() {
+    setTimeout(() => {
+        regenerate_forecast()
+        update_periodically()
+    }, update_frequency_seconds * 1000)
+}
+
+update_periodically()
 
 app.listen(web_service_port, () => console.log("Server started on", web_service_port, "at", start_time.toString()))

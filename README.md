@@ -1,10 +1,18 @@
 # weather_report
-Weather Report Web Service serving fake (random) weather data for Horsens, Aarhus and Copenhagen. It serves three kinds of data: Historic data, forecasts, and warnings (see below). The historical data is generated when the server starts and and will not change unless new data is posted. The forecasts are regenerated every time they are requested. The warnings are generated regularly, independent on other activity and unrelated to other data.
+Weather Report Web Service serving fake (random) weather data for Horsens, Aarhus and Copenhagen. It serves three kinds of data: Historic data, forecasts, and warnings (see below). The historical data is generated when the server starts and and will not change unless new data is posted. The forecasts are regenerated periodically (see below). The warnings are generated regularly, independent on other activity and unrelated to other data.
 
 You can run the server by typing the following in the root of the project:
 ```
 	npm start
   ```
+This will start the server with an update period of 10 minutes. That is, every 10 minutes the forecast and the warnings are regenerated. The historical data will not be affected.
+
+If you want the server to regenerate data sooner, give as an argument the number of seconds between updates. That is,
+```
+	npm start 60
+  ```
+will start the server with updates every minute.
+
 ### Web Service
 Running the server will start a web service on `http://localhost:8080/` with the following services:
 
