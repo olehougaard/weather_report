@@ -60,7 +60,7 @@ const regenerate_forecast = forecast => pipe(generate_future_events, flatMap( ev
         return existing_predictions.map ( p => {
             const adjustment = .8 + Math.random() * .4
             if (alertable(p) && Math.random() < 0.5)
-                return Object.assign({}, p, { from: p.from * adjustment, to: p.to * adjustment })
+                return Object.assign({}, p, { from: round_to(1)(p.from * adjustment), to: round_to(1)(p.to * adjustment) })
             else if (Math.random() < .5)
                 return new_predictions.find( np => p.type === np.type)
             else
