@@ -9,6 +9,7 @@ const web_service_port = 8080
 const web_socket_port = 8090
 
 const app = express()
+app.use(express.static('static'))
 app.use(body_parser.json())
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
