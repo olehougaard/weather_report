@@ -1,0 +1,50 @@
+<html>
+  <head>
+      <style>
+          td {
+              width: 120px;
+              height: 30px;
+          }
+          thead {
+            font-weight: bold;
+          }
+      </style>
+    <script crossorigin src="https://unpkg.com/react@15/dist/react.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@15/dist/react-dom.js"></script>
+    <script>var module = {}</script>
+    <script src="model.js"></script>
+    <script src="view.js"></script>
+  </head>
+  <body onload='init()'>
+    <h1>Welcome to Weather Report</h1>
+    <div id="Horsens"></div>
+    <div id="Aarhus"></div>
+    <div id="Copenhagen"></div>
+  </body>
+  <script>
+      const updater = id => update(document.getElementById(id))
+
+      const fetch_for = city => {
+        try {
+          fetch(`http://localhost:8080/data/${city}`)
+            .then(data_resp => data_resp.json())
+            .then(data => {
+              fetch(`http://localhost:8080/forecast/${city}`)
+                .then(forecast_resp => forecast_resp.json())
+                .then(forecast => {
+                  const model = digest({ data, forecast })
+                  updater(city)(view(city, model))
+                })
+            })
+        } catch(error) {
+          console.log(error)
+        }
+      }
+      
+      async function init() {
+        fetch_for('Horsens')
+        fetch_for('Aarhus')
+        fetch_for('Copenhagen')
+      }
+    </script>
+</html>
