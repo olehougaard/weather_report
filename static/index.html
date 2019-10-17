@@ -1,8 +1,38 @@
 <html>
   <head>
-
+      <style>
+          td {
+              width: 120px;
+              height: 30px;
+          }
+          thead {
+            font-weight: bold;
+          }
+      </style>
+    <script crossorigin src="https://unpkg.com/react@15/dist/react.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@15/dist/react-dom.js"></script>
+    <script>var module = {}</script>
+    <script src="model.js"></script>
+    <script src="view.js"></script>
   </head>
-  <body>
-    
+  <body onload='init()'>
+    <h1>Welcome to Weather Report</h1>
+    <div id="base"></div>
   </body>
+  <script>
+      const updater = update(document.getElementById('base'))
+      async function init() {
+        try {
+          fetch('http://localhost:8080/data').then(resp => {
+            resp.json().then(data => {
+              const model = digest({ data })
+              const renderer = m => updater(view(m, undefined))
+              renderer(model)
+            })
+          })
+        } catch(error) {
+          console.log(error)
+        }
+      }
+    </script>
 </html>
