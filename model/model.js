@@ -18,19 +18,7 @@ const cloud_measurement = measurement(data_type('cloud coverage', '%'))
 const prediction_keys = ['time', 'place', 'type', 'unit', 'from', 'to']
 const prediction_equals = with_equals(prediction_keys)
 
-const convert_to_F = temperature => {
-    if (h.isCelsius(temperature['unit'])) {
-        if (temperature['value']) {
-            temperature['value'] = h.convertValueToF(temperature['value'])
-            temperature['unit'] = 'F'
-        }
-    }
-    return temperature
-}
-
-const with_convert_to_F = o => Object.assign({}, o, {convert_to_F: convert_to_F(o)})
-
-const temperature = (value, event) => with_convert_to_F(temperature_measurement({value}, event))
+const temperature = (value, event) => temperature_measurement({value}, event)
 const temperature_prediction = ({from, to}, event) => prediction_equals(temperature_measurement({from, to}, event))
 
 const wind = (value, direction, event) => wind_measurement({value, direction}, event)

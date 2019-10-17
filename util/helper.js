@@ -26,5 +26,5 @@ const convertValueToMPH = value => round(value * 2.236936)
 
 const convertValueToMS = value => round(value * 0.44704)
 
-module.exports = {print, round, isFahrenheit, isCelsius, convertValueToF, convertValueToC, isInches,
-isMM, convertValueToInches, convertValueToMM, isMPH, isMS, convertValueToMPH, convertValueToMS}
+module.exports = { print, round, isFahrenheit, isCelsius, convertValueToF, convertValueToC, isInches,
+isMM, convertValueToInches, convertValueToMM, isMPH, isMS, convertValueToMPH, convertValueToMS }
