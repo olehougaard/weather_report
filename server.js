@@ -9,7 +9,6 @@ const web_service_port = 8080
 const web_socket_port = 8090
 
 const app = express()
-app.use(express.static('static'))
 app.use(body_parser.json())
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -17,6 +16,7 @@ app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Methods", "GET, POST, PATCH");
     next();
 });
+app.use(express.static('static'))
 
 const wss = new WebSocket.Server({ port: web_socket_port, path: '/warnings' })
 
@@ -63,7 +63,7 @@ app.get('/data/:place', (req, res) => {
 })
 
 app.post('/data', (req, res) => {
-    data.push(...req.body)
+    data.push([].concat(req.body))
     res.status(201)
     res.send()
 })
