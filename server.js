@@ -63,9 +63,10 @@ app.get('/data/:place', (req, res) => {
 })
 
 app.post('/data', (req, res) => {
-    data.push(...[].concat(req.body))
+    const new_data = [].concat(req.body)
+    data.push(...new_data)
     res.status(201)
-    res.send()
+    res.send(new_data)
 })
 
 app.get('/forecast', (_, res) => {
