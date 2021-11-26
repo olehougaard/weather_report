@@ -1,5 +1,4 @@
 const express = require('express')
-const body_parser = require('body-parser')
 const WebSocket = require('ws')
 const generator = require('./model/generate.js')
 const { alert } = require('./model/model.js')
@@ -9,8 +8,8 @@ const web_service_port = 8080
 const web_socket_port = 8090
 
 const app = express()
-app.use(body_parser.json())
-app.use(function(req, res, next) {
+app.use(express.json())
+app.use(function(_, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, User-Agent");
     res.header("Access-Control-Allow-Methods", "GET, POST, PATCH");
@@ -131,7 +130,7 @@ update_periodically()
 
 wss.on('connection', (ws, req) => {
     ws.on('message', message => {
-        switch(message) {
+        switch(message.toString()) {
             case 'subscribe':
                 if (!ws.subscribed) {
                     ws.subscribed = true
@@ -142,7 +141,7 @@ wss.on('connection', (ws, req) => {
                 ws.subscribed = false
                 break;
             default:
-                console.error(`Incorrect message: '${message}' from ${req.connection.remoteAddress} (${req.connection.remoteFamily})`)
+                console.error(`Incorrect message: '${message}' from ${req.socket.remoteAddress} (${req.socket.remoteFamily})`)
         }
     })
     ws.on('close', () => ws.subscribed = false)
