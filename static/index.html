@@ -1,8 +1,52 @@
 <html>
-  <head>
+<head>
+    <title>Weather Forecast For You And Me And Everyone Else</title>
+    <style>
+        td {
+            width: 40px;
+            height: 40px;
+            border: 1px solid black;
+        }
 
-  </head>
-  <body>
-    
-  </body>
+        table {
+            border: 1px solid black;
+            border-spacing: 0;
+        }
+    </style>
+<script type='module'>
+    import view from './view.js'
+    import model from './model.js'
+     
+    function display(theView, temperature, wind, precipitation) {
+        const theModel = model(temperature, wind, precipitation)
+        //theView.update(theModel)
+    }
+
+    window.init = async function() {
+        const theView = view(window)
+        try {
+            const response = await fetch('http://localhost:8080/data')
+            if (!response.ok) throw response.statusText
+            const weatherData = await response.json()
+            display(theView, temperature, wind, precipitation)
+            console.log(response);
+        }
+        catch (e) {
+            theView.displayError(e)
+        }
+    }
+    init()
+</script>
+</head>
+
+<body onload="init()">
+    <div id='base'>
+        <h1>Weather</h1>
+        <table id='weather'>
+            <thead><tr><td>Temperature</td><td>Wind</td><td>Rain</td></tr></thead>
+            <tbody id='weather_data'></tbody>
+        </table>
+        <p id='error messages'>
+    </div>
+</body>
 </html>
