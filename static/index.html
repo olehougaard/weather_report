@@ -1,4 +1,5 @@
 <html>
+
 <head>
     <title>Weather Forecast For You And Me And Everyone Else</title>
     <style>
@@ -13,40 +14,73 @@
             border-spacing: 0;
         }
     </style>
-<script type='module'>
-    import view from './view.js'
-    import model from './model.js'
-     
-    function display(theView, temperature, wind, precipitation) {
-        const theModel = model(temperature, wind, precipitation)
-        //theView.update(theModel)
-    }
+    <script type='module'>
+        import view from './view.js'
+        import model from './model.js'
 
-    window.init = async function() {
-        const theView = view(window)
-        try {
-            const response = await fetch('http://localhost:8080/data')
-            if (!response.ok) throw response.statusText
-            const weatherData = await response.json()
-            display(theView, temperature, wind, precipitation)
-            console.log(response);
+        const LOG = (msg) => console.log(msg)
+
+        function display(theView, temperature, percipitation, wind, cloud) {
+            const theModel = model({ temperature, percipitation, wind, cloud })
+            theView.update(theModel)
         }
-        catch (e) {
-            theView.displayError(e)
+
+        window.init = async function () {
+            // Debugging Purposes
+            // LOG('Initialising')
+
+            const theView = view(window)
+
+            try {
+                // LOG('Fetching LocalHost:8080/data')
+                const response = await fetch('http://localhost:8080/data')
+
+                // LOG('Checking Response')
+                if (!response.ok) {
+                    LOG('Response was not OK')
+                    throw response.statusText
+                }
+
+                // LOG('Retreiving WeatherData')
+                const weatherData = await response.json()
+
+                // LOG('Splitting Data into Objects [Object Destructuring]')
+                let temp_data, perc_data, wind_data, cloud_data
+                [temp_data, perc_data, wind_data, cloud_data] = weatherData
+                // LOG(`T: ${temperature.type}\nN: ${percipitation.type}\nW: ${wind_speed.type}\nC: ${cloud_coverage.type}`)
+
+                LOG('Attempt to display data')
+                display(theView, temp_data, perc_data, wind_data, cloud_data)
+
+                // console.log(response);
+            }
+            catch (e) {
+                LOG(`\tinit.catch: ${e}`)
+                theView.displayError(e)
+            }
         }
-    }
-    init()
-</script>
+
+        init()
+
+    </script>
 </head>
 
 <body onload="init()">
     <div id='base'>
         <h1>Weather</h1>
         <table id='weather'>
-            <thead><tr><td>Temperature</td><td>Wind</td><td>Rain</td></tr></thead>
+            <thead>
+                <tr>
+                    <td>Temperature</td>
+                    <td>Wind</td>
+                    <td>Rain</td>
+                </tr>
+            </thead>
             <tbody id='weather_data'></tbody>
         </table>
-        <p id='error messages'>
+        <p id='error_messages'>
     </div>
+
 </body>
+
 </html>
