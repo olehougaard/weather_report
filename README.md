@@ -4,7 +4,7 @@ Weather Report Web Service serving fake (random) weather data for Horsens, Aarhu
 
 You can run the server by typing the following in the root of the project:
 
-```
+```sh
 	npm start
 ```
 
@@ -12,7 +12,7 @@ This will start the server with an update period of 10 minutes. That is, every 1
 
 If you want the server to regenerate data sooner, give as an argument the number of seconds between updates. That is,
 
-```
+```sh
 	npm start 60
 ```
 
