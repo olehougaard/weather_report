@@ -1,50 +1,87 @@
-export default window => {
-    const document = window.document
-    const table_body = document.getElementById('weather_data')
-    const listeners = []
+export default (window) => {
+  const document = window.document;
+  const table_body = document.getElementById("weather_data");
+  const listeners = [];
 
-    const listen = l => listeners.push(l)
+  const listen = (l) => listeners.push(l);
 
-    const displayError = e => {
-        const msg_board = document.getElementById('error_messages')
-        msg_board.innerText = e
-    }
+  const displayError = (e) => {
+    const msg_board = document.getElementById("error_messages");
+    msg_board.innerText = e;
+  };
 
-    const prompt = window.prompt.bind(window)
+  const prompt = window.prompt.bind(window);
 
-    const update = (model) => {
-        console.log('> Updating Site')
-        // model.dump()
-        
-        // Update individual View Sections
-        let temp = model.temperature
-        updateTemperature(temp)
+  const update = (model) => {
+    console.log("> Updating Site");
+    // model.dump()
 
-        let perc = model.percipitation
-        updatePercipitation(perc)
+    // Start Table Row
+    let row = document.createElement("tr");
 
-        let wind = model.wind_speed
-        updateWindSpeed(wind)
+    // Update individual View Sections
+    let temp = model.temperature;
+    updateTemperature(row, temp);
 
-        let cloud = model.cloud_coverage
-        updateCloudCoverage(cloud)        
-    }
+    let wind = model.wind_speed;
+    updateWindSpeed(row, wind);
+    
+    let perc = model.percipitation;
+    updatePercipitation(row, perc);
 
-    function updateTemperature(t_data){
-        console.log('Temperature not updated')
-    }
+    let cloud = model.cloud_coverage;
+    // updateCloudCoverage(cloud)
 
-    function updatePercipitation(p_data){
-        console.log('Percipitation not updated')
-    }
+    // updateValueUnit(row, cloud);
 
-    function updateWindSpeed(w_data){
-        console.log('Wind Speed not updated')
-    }
+    // End Table Row
+    table_body.appendChild(row);
+  };
 
-    function updateCloudCoverage(c_data){
-        console.log('Cloud Coverage not updated')
-    }
+  function updateTemperature(row, t_data) {
+    console.log("Temperature is fucked");
 
-    return { listen, prompt, displayError, update }
-}
+    let td = document.createElement("td");
+    td.textContent = `${t_data.value}${t_data.unit}`;
+
+    row.appendChild(td);
+  }
+
+  function updatePercipitation(row, p_data) {
+    console.log("Percipitation not updated");
+
+    let td = document.createElement("td");
+    td.textContent = `${p_data.value}${p_data.unit}`;
+
+    row.appendChild(td);
+  }
+
+  function updateWindSpeed(row, w_data) {
+    console.log("Wind Speed not updated");
+
+    let td = document.createElement("td");
+    td.textContent = `${w_data.value}${w_data.unit}`;
+
+    row.appendChild(td);
+  }
+
+  function updateCloudCoverage(row, c_data) {
+    console.log("Cloud Coverage not updated");
+
+    let td = document.createElement("td");
+    td.textContent = `${c_data.value}${c_data.unit}`;
+
+    row.appendChild(td);
+  }
+
+  function updateValueUnit(row, data) {
+    // Create TD element
+    let td = document.createElement("td");
+    // Add Data Value and Unit to the Context
+    td.textContent = `${data.value}${data.unit}`;
+    // Add TD to the TR
+    row.appendChild(td);
+  }
+
+  return { listen, prompt, displayError, update };
+};
