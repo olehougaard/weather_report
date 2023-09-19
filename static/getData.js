@@ -1,31 +1,52 @@
-const city = document.getElementById("city");
+// DOM elements
+const cityDropdown = document.getElementById("citySelector");
 const forecastButton = document.getElementById("forecastButton");
-const minTemperatureDiv = document.getElementById("minTemperature");
-const maxTemperatureDiv = document.getElementById("maxTemperature");
-const totalPrecipitationDiv = document.getElementById("totalPrecipitation");
-const averageWindSpeedDiv = document.getElementById("averageWindSpeed");
-const hourlyForecastDiv = document.getElementById("hourlyForecast");
+const minTemperatureDiv = document.getElementById("minTempDisplay");
+const maxTemperatureDiv = document.getElementById("maxTempDisplay");
+const totalPrecipitationDiv = document.getElementById(
+  "totalPrecipitationDisplay"
+);
+const averageWindSpeedDiv = document.getElementById("averageWindSpeedDisplay");
 
+// Function to navigate to a new page
 function navigateToPage(pageName) {
   window.location.href = `${pageName}.html`;
 }
 
+// Event listener for city selection change
+cityDropdown.addEventListener("change", () => {
+  updateWeatherData();
+});
+
+// Event listeners for buttons
+forecastButton.addEventListener("click", () => {
+  navigateToPage("index");
+});
+
+formButton.addEventListener("click", () => {
+  navigateToPage("form");
+});
+
+// Function to fetch and update weather data
 function updateWeatherData() {
-  const apiUrl = `http://localhost:8080/forecast/${city}`;
-  fetch(apiUrl)
+  const apiEndpoint = `http://localhost:8080/data/${cityDropdown.value}`;
+
+  fetch(apiEndpoint)
     .then((response) => response.json())
     .then((data) => {
-      const currentDate = new Date();
-      const lastDayData = data.filter((item) => {
+      const currentDay = new Date();
+      const recentDayData = data.filter((item) => {
         const itemDate = new Date(item.time);
+        const timeDifference = currentDay - itemDate;
+        const millisecondsInADay = 24 * 60 * 60 * 1000;
         return (
-          item.place === city.value &&
-          currentDate - itemDate < 24 * 60 * 60 * 1000
+          item.place === cityDropdown.value &&
+          timeDifference < millisecondsInADay
         );
       });
 
-      let minTemperatureValue = Infinity;
-      let maxTemperatureValue = -Infinity;
+      let minTempValue = Infinity;
+      let maxTempValue = -Infinity;
       let totalPrecipitationValue = 0;
       let windSpeedSum = 0;
       let windSpeedCount = 0;
@@ -33,17 +54,11 @@ function updateWeatherData() {
       let precipitationUnit = "";
       let windSpeedUnit = "";
 
-      lastDayData.forEach((item) => {
+      recentDayData.forEach((item) => {
         switch (item.type) {
           case "temperature":
-            minTemperatureValue =
-              item.value < minTemperatureValue
-                ? item.value
-                : minTemperatureValue;
-            maxTemperatureValue =
-              item.value > maxTemperatureValue
-                ? item.value
-                : maxTemperatureValue;
+            minTempValue = Math.min(minTempValue, item.value);
+            maxTempValue = Math.max(maxTempValue, item.value);
             temperatureUnit = item.unit;
             break;
           case "precipitation":
@@ -61,8 +76,8 @@ function updateWeatherData() {
       const averageWindSpeed = (windSpeedSum / windSpeedCount).toFixed(2);
       const totalPrecipitation = totalPrecipitationValue.toFixed(2);
 
-      minTemperatureDiv.textContent = `Min Temperature: ${minTemperatureValue} ${temperatureUnit}`;
-      maxTemperatureDiv.textContent = `Max Temperature: ${maxTemperatureValue} ${temperatureUnit}`;
+      minTemperatureDiv.textContent = `Minimum Temperature: ${minTempValue} ${temperatureUnit}`;
+      maxTemperatureDiv.textContent = `Maximum Temperature: ${maxTempValue} ${temperatureUnit}`;
       totalPrecipitationDiv.textContent = `Total Precipitation: ${totalPrecipitation} ${precipitationUnit}`;
       averageWindSpeedDiv.textContent = `Average Wind Speed: ${averageWindSpeed} ${windSpeedUnit}`;
     })
@@ -71,17 +86,5 @@ function updateWeatherData() {
     });
 }
 
-city.addEventListener("change", () => {
-  city.value;
-  updateWeatherData();
-});
-
-forecastButton.addEventListener("click", () => {
-  navigateToPage("index");
-});
-
-formButton.addEventListener("click", () => {
-  navigateToPage("form");
-});
-
+// Initial data update
 updateWeatherData();
