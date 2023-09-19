@@ -3,6 +3,7 @@ const weatherButton = document.getElementById("weatherButton");
 const form = document.getElementById("formButton");
 const hourSelector = document.getElementById("hourSelector");
 const citySelector = document.getElementById("city");
+const forecast = document.getElementById("forecast");
 
 // Event listener for city selection change
 citySelector.addEventListener("change", () => {
@@ -30,7 +31,7 @@ function fetchWeatherData(city) {
     .then((response) => response.json())
     .then((data) => {
       const jsonString = JSON.stringify(data, undefined, 4);
-      hourlyForecastDiv.textContent = jsonString;
+      forecast.textContent = jsonString;
     })
     .catch((error) => console.error("Error fetching forecast data:", error));
 }
