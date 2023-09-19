@@ -45,46 +45,76 @@ function updateWeatherData() {
         );
       });
 
-      let minTempValue = Infinity;
-      let maxTempValue = -Infinity;
-      let totalPrecipitationValue = 0;
-      let windSpeedSum = 0;
-      let windSpeedCount = 0;
-      let temperatureUnit = "";
-      let precipitationUnit = "";
-      let windSpeedUnit = "";
+      // Define an initial accumulator object with default values
+      const initialValue = {
+        minTempValue: Infinity,
+        maxTempValue: -Infinity,
+        totalPrecipitationValue: 0,
+        windSpeedSum: 0,
+        windSpeedCount: 0,
+        temperatureUnit: "",
+        precipitationUnit: "",
+        windSpeedUnit: "",
+      };
 
-      recentDayData.forEach((item) => {
+      // Use the reduce method to calculate the values
+      const weatherData = recentDayData.reduce((accumulator, item) => {
         switch (item.type) {
           case "temperature":
-            minTempValue = Math.min(minTempValue, item.value);
-            maxTempValue = Math.max(maxTempValue, item.value);
-            temperatureUnit = item.unit;
+            accumulator.minTempValue = Math.min(
+              accumulator.minTempValue,
+              item.value
+            );
+            accumulator.maxTempValue = Math.max(
+              accumulator.maxTempValue,
+              item.value
+            );
+            accumulator.temperatureUnit = item.unit;
             break;
           case "precipitation":
-            totalPrecipitationValue += item.value;
-            precipitationUnit = item.unit;
+            accumulator.totalPrecipitationValue += item.value;
+            accumulator.precipitationUnit = item.unit;
             break;
           case "wind speed":
-            windSpeedSum += item.value;
-            windSpeedCount += 1;
-            windSpeedUnit = item.unit;
+            accumulator.windSpeedSum += item.value;
+            accumulator.windSpeedCount += 1;
+            accumulator.windSpeedUnit = item.unit;
             break;
         }
-      });
+        return accumulator;
+      }, initialValue);
+
+      // Extract individual values from the weatherData object
+      const {
+        minTempValue,
+        maxTempValue,
+        totalPrecipitationValue,
+        windSpeedSum,
+        windSpeedCount,
+        temperatureUnit,
+        precipitationUnit,
+        windSpeedUnit,
+      } = weatherData;
 
       const averageWindSpeed = (windSpeedSum / windSpeedCount).toFixed(2);
       const totalPrecipitation = totalPrecipitationValue.toFixed(2);
 
-      minTemperatureDiv.textContent = `Minimum Temperature: ${minTempValue} ${temperatureUnit}`;
-      maxTemperatureDiv.textContent = `Maximum Temperature: ${maxTempValue} ${temperatureUnit}`;
-      totalPrecipitationDiv.textContent = `Total Precipitation: ${totalPrecipitation} ${precipitationUnit}`;
-      averageWindSpeedDiv.textContent = `Average Wind Speed: ${averageWindSpeed} ${windSpeedUnit}`;
+      function updateWeatherInfo(infoDiv, value, unit) {
+        infoDiv.textContent = `${infoDiv.dataset.label}: ${value} ${unit}`;
+      }
+
+      updateWeatherInfo(minTemperatureDiv, minTempValue, temperatureUnit);
+      updateWeatherInfo(maxTemperatureDiv, maxTempValue, temperatureUnit);
+      updateWeatherInfo(
+        totalPrecipitationDiv,
+        totalPrecipitation,
+        precipitationUnit
+      );
+      updateWeatherInfo(averageWindSpeedDiv, averageWindSpeed, windSpeedUnit);
     })
     .catch((error) => {
       console.error("Error fetching data:", error);
     });
 }
 
-// Initial data update
 updateWeatherData();

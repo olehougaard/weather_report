@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Weather Data</title>
+    <title>Yesterday's weather</title>
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -49,6 +49,7 @@
         display: block;
         font-weight: bold;
         margin-bottom: 5px;
+        margin-top: 20px;
       }
 
       select {
@@ -70,7 +71,7 @@
   </head>
   <body>
     <div class="container">
-      <h1>Weather Data</h1>
+      <h1>Yesterday's weather</h1>
 
       <div class="button-container">
         <button id="forecastButton">Go to Forecast</button>
@@ -86,25 +87,15 @@
         </select>
       </div>
 
-      <!-- Minimum temperature for the last day -->
-      <div class="weather-info" id="minTempDisplay">
-        <!-- Minimum temperature data will be displayed here -->
-      </div>
+      <label>Here is your data for the selected city:</label>
 
-      <!-- Maximum temperature for the last day -->
-      <div class="weather-info" id="maxTempDisplay">
-        <!-- Maximum temperature data will be displayed here -->
-      </div>
+      <div class="weather-info" id="totalPrecipitationDisplay"></div>
 
-      <!-- Total precipitation for the last day -->
-      <div class="weather-info" id="totalPrecipitationDisplay">
-        <!-- Total precipitation data will be displayed here -->
-      </div>
+      <div class="weather-info" id="averageWindSpeedDisplay"></div>
 
-      <!-- Average wind speed for the last day -->
-      <div class="weather-info" id="averageWindSpeedDisplay">
-        <!-- Average wind speed data will be displayed here -->
-      </div>
+      <div class="weather-info" id="minTempDisplay"></div>
+
+      <div class="weather-info" id="maxTempDisplay"></div>
     </div>
 
     <script src="getData.js"></script>
