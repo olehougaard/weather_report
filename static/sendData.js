@@ -94,14 +94,36 @@ function navigateToPage(pageName) {
     navigateToPage("index");
   });
 
-formElement.addEventListener('submit', (event) => {
+  formElement.addEventListener('submit', (event) => {
+    console.log('Form submitted!');  // Add this line to verify form submission is captured
     event.preventDefault();  // Prevent the default form submission behavior
 
-    const formData = new FormData(formElement);
-    const dataToSend = {};
-    formData.forEach((value, key) => {
-        dataToSend[key] = value;
-    });
+    const selectedType = typeSelection.value;
+
+    let dataToSend = {
+        type: selectedType,
+        unit: '',
+        time: timeInput.value,
+        place: locationSelect.value
+    };
+
+    if (selectedType === 'temperature') {
+        dataToSend.value = parseFloat(temperatureInput.value);
+        dataToSend.unit = 'C';
+    } else if (selectedType === 'wind') {
+        dataToSend.value = parseFloat(windSpeedInput.value);
+        dataToSend.unit = 'm/s';
+        dataToSend.wind_direction = windDirectionSelectElement.value;
+    } else if (selectedType === 'precipitation') {
+        dataToSend.value = parseFloat(precipitationAmountInput.value);
+        dataToSend.unit = 'mm';
+        dataToSend.precipitation_type = precipitationTypeSelectElement.value;
+    } else if (selectedType === 'cloud coverage') {
+        dataToSend.value = parseFloat(cloudCoverageInput.value);
+        dataToSend.unit = '%';
+    }
+
+    console.log('Data to send:', dataToSend);  // Log the dataToSend
 
     fetch('http://localhost:8080/data', {
         method: 'POST',
