@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Form</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        margin: 0;
+        padding: 20px;
+        text-align: center;
+      }
+
+      button {
+        background-color: #0074D9;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin: 10px;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      form {
+        max-width: 400px;
+        margin: 0 auto;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        text-align: left;
+      }
+
+      label {
+        display: block;
+        font-weight: bold;
+        margin-top: 10px;
+      }
+
+      select, input[type="number"], input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        margin-top: 5px;
+      }
+
+      select:focus, input:focus {
+        outline: none;
+        border-color: #0074D9;
+      }
+
+      #windFields, #precipitationFields {
+        display: none;
+      }
+
+      #unitLabel, #temperatureLabel, #cloudCoverageLabel {
+        display: none;
+      }
+    </style>
+</head>
+<body>
+
+    <button id="weatherButton">Yesterday's weather</button>
+    <button id="formButton">Weather forecast</button>
+
+    <form id="dataForm">
+        <label for="type">Type:</label>
+        <select id="type">
+            <option value="" disabled selected>Select Type</option>
+            <option value="temperature">Temperature</option>
+            <option value="precipitation">Precipitation</option>
+            <option value="wind">Wind</option>
+            <option value="cloud coverage">Cloud Coverage</option>
+        </select>
+
+        <label id="unitLabel">Unit:</label>
+
+        <div id="windFields">
+            <label id="windDirectionLabel">Wind Direction:</label>
+            <select id="wind_direction">
+                <option value="north">North</option>
+                <option value="south">South</option>
+                <option value="east">East</option>
+                <option value="west">West</option>
+            </select>
+
+            <label id="windSpeedLabel">Wind Speed (m/s):</label>
+            <input type="number" id="wind_speed" step="0.1">
+        </div>
+
+        <div id="precipitationFields">
+            <label id="precipitationTypeLabel">Precipitation Type:</label>
+            <select id="precipitation_type">
+                <option value="rain">Rain</option>
+                <option value="snow">Snow</option>
+                <option value="sleet">Sleet</option>
+            </select>
+
+            <label id="precipitationAmountLabel">Precipitation Amount (mm):</label>
+            <input type="number" id="precipitation_amount" step="0.1">
+        </div>
+
+        <label id="temperatureLabel">Temperature (°C):</label>
+        <input type="number" id="temperature" step="0.1">
+
+        <label id="cloudCoverageLabel">Cloud Coverage (%):</label>
+        <input type="number" id="cloud_coverage" min="0" max="100">
+
+        <label for="location">Location:</label>
+        <select id="location">
+            <option value="Horsens">Horsens</option>
+            <option value="Aarhus">Aarhus</option>
+            <option value="Copenhagen">Copenhagen</option>
+        </select>
+
+        <label for="time">Time:</label>
+        <input type="text" id="time">
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="sendData.js"></script>
+
+</body>
+</html>
