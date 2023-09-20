@@ -2,7 +2,6 @@ export default (window) => {
   const document = window.document;
   const currentWeather = document.getElementById("weather_data");
   const forecast = document.getElementById("forecast_data");
-  const lastStuff = document.getElementById("????");
   const listeners = [];
 
   const listen = (l) => listeners.push(l);

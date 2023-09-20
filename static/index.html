@@ -15,6 +15,7 @@
         }
     </style>
     <script type='module'>
+        // Import { things } from 'module'
         import view from './view.js'
         import { currentModel, forecastModel } from './model.js'
 
@@ -22,7 +23,7 @@
 
         function displayCurrent(theView, temperature, percipitation, wind, cloud) {
             // Create Current Weather Model
-            const theModel = currentModel({ temperature, percipitation, wind, cloud })
+            const currentWeatherModel = currentModel({ temperature, percipitation, wind, cloud })
 
             // Get the Table where Current Weather is being shown
             const weatherTable = document.getElementById('weather_data');
@@ -33,23 +34,23 @@
             }
 
             // Update Current Weather
-            theView.updateCurrent(theModel)
+            theView.updateCurrent(currentWeatherModel)
         }
 
         function displayForecast(theView, temperature, percipitation, wind, cloud) {
             // Create Forecast Model
-            const f_model = forecastModel({ temperature, percipitation, wind, cloud })
+            const forecastWeatherModel = forecastModel({ temperature, percipitation, wind, cloud })
 
             // Get the Table where Forecasts are shown
             const forecastTable = document.getElementById('forecast_data');
 
             //Clear existing rows
             while (forecastTable.firstChild) {
-              forecastTable.removeChild(forecastTable.firstChild);
+                forecastTable.removeChild(forecastTable.firstChild);
             }
 
             // Update Forecast
-            theView.updateForecast(f_model)
+            theView.updateForecast(forecastWeatherModel)
         }
 
         //Hardcoded value for Aarhus is not a great solution, but it is our solution.
@@ -85,8 +86,7 @@
             const weatherData = await currentDataResponse.json()
 
             // LOG('Splitting Data into Objects [Object Destructuring]')
-            let temp_data, perc_data, wind_data, cloud_data
-            [temp_data, perc_data, wind_data, cloud_data] = weatherData
+            let [temp_data, perc_data, wind_data, cloud_data] = weatherData
             // LOG(`T: ${temperature.type}\nN: ${percipitation.type}\nW: ${wind_speed.type}\nC: ${cloud_coverage.type}`)
 
             LOG('Attempt to display data')
@@ -102,14 +102,13 @@
 
             const forecastJson = await forecastResponse.json()
 
-            let temp_data, perc_data, wind_data, cloud_data
-            [temp_data, perc_data, wind_data, cloud_data] = forecastJson
+            let [temp_data, perc_data, wind_data, cloud_data] = forecastJson
 
             displayForecast(theView, temp_data, perc_data, wind_data, cloud_data)
         }
 
+        // Setup of the Drop Down / Selecter
         function selectOption() {
-            console.log("Testing")
             let selectedValue = dropdown.options[dropdown.selectedIndex].text
             init(selectedValue)
         }
@@ -119,6 +118,7 @@
         const dropdown = document.getElementById('dropdown')
         dropdown.addEventListener('change', selectOption)
 
+        // Who knows what this does...?
         init()
     </script>
 </head>
@@ -136,9 +136,15 @@
         <table id='weather'>
             <thead>
                 <tr>
-                    <td><pre> Temperature </pre></td>
-                    <td><pre>    Wind     </pre></td>
-                    <td><pre>    Rain     </pre></td>
+                    <td>
+                        <pre> Temperature </pre>
+                    </td>
+                    <td>
+                        <pre>    Wind     </pre>
+                    </td>
+                    <td>
+                        <pre>    Rain     </pre>
+                    </td>
                 </tr>
             </thead>
             <tbody id='weather_data'></tbody>
@@ -151,10 +157,18 @@
         <table id="forecast">
             <thead>
                 <tr>
-                    <td><pre>  Temperature   </pre></td>
-                    <td><pre>      Wind      </pre></td>
-                    <td><pre> Cloud Coverage </pre></td>
-                    <td><pre>      Rain      </pre></td>
+                    <td>
+                        <pre>  Temperature   </pre>
+                    </td>
+                    <td>
+                        <pre>      Wind      </pre>
+                    </td>
+                    <td>
+                        <pre> Cloud Coverage </pre>
+                    </td>
+                    <td>
+                        <pre>      Rain      </pre>
+                    </td>
                 </tr>
             </thead>
             <tbody id="forecast_data">
