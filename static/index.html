@@ -58,6 +58,8 @@
             // Debugging Purposes
             // LOG('Initialising')
 
+            document.getElementById("city").innerHTML = selectedValue
+
             const theView = view(window)
 
             try {
@@ -111,6 +113,7 @@
         function selectOption() {
             let selectedValue = dropdown.options[dropdown.selectedIndex].text
             init(selectedValue)
+
         }
 
 
@@ -120,20 +123,21 @@
             var temperatureValue = document.getElementById('temperature').value;
             var windValue = document.getElementById('wind').value;
             var rainValue = document.getElementById('rain').value;
+            var city = dropdown.options[dropdown.selectedIndex].text
 
-            // Create a JavaScript object in the desired format
+            // Create an object in desired format
             var postData = [
                 {
                     "type": "temperature",
                     "time": new Date().toISOString(),
-                    "place": dropdown.options[dropdown.selectedIndex].text,
+                    "place": city,
                     "value": parseFloat(temperatureValue),
                     "unit": "C"
                 },
                 {
                     "type": "precipitation",
                     "time": new Date().toISOString(),
-                    "place": dropdown.options[dropdown.selectedIndex].text,
+                    "place": city,
                     "value": parseFloat(rainValue),
                     "unit": "mm",
                     "precipitation_type": "rain"
@@ -141,7 +145,7 @@
                 {
                     "type": "wind speed",
                     "time": new Date().toISOString(),
-                    "place": dropdown.options[dropdown.selectedIndex].text,
+                    "place": city,
                     "value": parseFloat(windValue),
                     "unit": "m/s",
                     "direction": "North"
@@ -149,16 +153,16 @@
                 {
                     "type": "cloud coverage",
                     "time": new Date().toISOString(),
-                    "place": dropdown.options[dropdown.selectedIndex].text,
+                    "place": city,
                     "value": 100,
                     "unit": "%"
                 }
             ];
 
-            // Convert the JavaScript object to JSON
+            // Convert the object to JSON
             var postDataJSON = JSON.stringify(postData);
 
-            // Make a POST request to the endpoint
+            // Make a POST request
             fetch('http://localhost:8080/data', {
                 method: 'POST',
                 headers: {
@@ -182,15 +186,13 @@
 
         // Attach the PostData function to the button click event
         var postButton = document.getElementById('postButton');
-        postButton.addEventListener('click', PostData);
+        postButton.addEventListener('click', PostData)
 
         window.selectOption = selectOption
 
         const dropdown = document.getElementById('dropdown')
         dropdown.addEventListener('change', selectOption)
 
-        // Who knows what this does...?
-        init()
     </script>
 </head>
 
@@ -248,7 +250,7 @@
             </tbody>
         </table>
 
-        <h1>Post some new weather data for </h1>
+        <h1>Post some new weather data for <span id="city"></span> </h1>
         <!-- Post new data -->
         <table id='weather'>
             <thead>
