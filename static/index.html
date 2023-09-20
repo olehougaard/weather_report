@@ -16,18 +16,28 @@
     </style>
     <script type='module'>
         import view from './view.js'
-        import model from './model.js'
+        import { currentModel, forecastModel } from './model.js'
 
         const LOG = (msg) => console.log(msg)
 
-        function display(theView, temperature, percipitation, wind, cloud) {
-            const theModel = model({ temperature, percipitation, wind, cloud })
+        function displayCurrent(theView, temperature, percipitation, wind, cloud) {
+            const theModel = currentModel({ temperature, percipitation, wind, cloud })
             const weatherTable = document.getElementById('weather_data');
             //Clear existing rows
             while (weatherTable.firstChild) {
                 weatherTable.removeChild(weatherTable.firstChild);
             }
-            theView.update(theModel)
+            theView.updateCurrent(theModel)
+        }
+
+        function displayForecast(theView, temperature, percipitation, wind, cloud) {
+            const theModel = forecastModel({ temperature, percipitation, wind, cloud })
+            const forecastTable = document.getElementById('forecast');
+            //Clear existing rows
+            while (forecastTable.firstChild) {
+                forecastTable.removeChild(forecastTable.firstChild);
+            }
+            theView.updateForecast(theModel)
         }
 
         //Hardcoded value for Aarhus is not a great solution, but it is our solution.
@@ -38,33 +48,59 @@
             const theView = view(window)
 
             try {
-                // LOG('Fetching LocalHost:8080/data')
-                const currentDataResponse = await fetch('http://localhost:8080/data' + '/' + selectedValue)
-
-
-                // LOG('Checking Response')
-                if (!currentDataResponse.ok) {
-                    LOG('Response was not OK')
-                    throw currentDataResponse.statusText
-                }
-
-                // LOG('Retreiving WeatherData')
-                const weatherData = await currentDataResponse.json()
-
-                // LOG('Splitting Data into Objects [Object Destructuring]')
-                let temp_data, perc_data, wind_data, cloud_data
-                [temp_data, perc_data, wind_data, cloud_data] = weatherData
-                // LOG(`T: ${temperature.type}\nN: ${percipitation.type}\nW: ${wind_speed.type}\nC: ${cloud_coverage.type}`)
-
-                LOG('Attempt to display data')
-                display(theView, temp_data, perc_data, wind_data, cloud_data)
-
-                // console.log(response);
+                getCurrentWeather(selectedValue, theView)
+                getForecast(selectedValue, theView)
             }
             catch (e) {
                 LOG(`\tinit.catch: ${e}`)
                 theView.displayError(e)
             }
+        }
+
+        async function getCurrentWeather(city, theView) {
+            // LOG('Fetching LocalHost:8080/data')
+            const currentDataResponse = await fetch('http://localhost:8080/data' + '/' + city)
+
+
+            // LOG('Checking Response')
+            if (!currentDataResponse.ok) {
+                LOG('Response was not OK')
+                throw currentDataResponse.statusText
+            }
+
+            // LOG('Retreiving WeatherData')
+            const weatherData = await currentDataResponse.json()
+
+            // LOG('Splitting Data into Objects [Object Destructuring]')
+            let temp_data, perc_data, wind_data, cloud_data
+            [temp_data, perc_data, wind_data, cloud_data] = weatherData
+            // LOG(`T: ${temperature.type}\nN: ${percipitation.type}\nW: ${wind_speed.type}\nC: ${cloud_coverage.type}`)
+
+            LOG('Attempt to display data')
+            displayCurrent(theView, temp_data, perc_data, wind_data, cloud_data)
+        }
+
+        async function getForecast(city, theView) {
+            // LOG('Fetching LocalHost:8080/data')
+            const forecastResponse = await fetch('http://localhost:8080/forecast' + '/' + city)
+
+
+            // LOG('Checking Response')
+            if (!forecastResponse.ok) {
+                LOG('Response was not OK')
+                throw forecastResponse.statusText
+            }
+
+            // LOG('Retreiving WeatherData')
+            const weatherData = await forecastResponse.json()
+
+            // LOG('Splitting Data into Objects [Object Destructuring]')
+            let temp_data, perc_data, wind_data, cloud_data
+            [temp_data, perc_data, wind_data, cloud_data] = weatherData
+            //LOG(`T: ${temperature.type}\nN: ${percipitation.type}\nW: ${wind_speed.type}\nC: ${cloud_coverage.type}`)
+
+            LOG('Attempt to display data')
+            displayForecast(theView, temp_data, perc_data, wind_data, cloud_data)
         }
 
         function selectOption() {
