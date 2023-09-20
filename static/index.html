@@ -22,10 +22,16 @@
 
         function display(theView, temperature, percipitation, wind, cloud) {
             const theModel = model({ temperature, percipitation, wind, cloud })
+            const weatherTable = document.getElementById('weather_data');
+            //Clear existing rows
+            while (weatherTable.firstChild) {
+                weatherTable.removeChild(weatherTable.firstChild);
+            }
             theView.update(theModel)
         }
 
-        window.init = async function () {
+        //Hardcoded value for Aarhus is not a great solution, but it is our solution.
+        window.init = async function (selectedValue = 'Aarhus') {
             // Debugging Purposes
             // LOG('Initialising')
 
@@ -33,16 +39,17 @@
 
             try {
                 // LOG('Fetching LocalHost:8080/data')
-                const response = await fetch('http://localhost:8080/data')
+                const currentDataResponse = await fetch('http://localhost:8080/data' + '/' + selectedValue)
+
 
                 // LOG('Checking Response')
-                if (!response.ok) {
+                if (!currentDataResponse.ok) {
                     LOG('Response was not OK')
-                    throw response.statusText
+                    throw currentDataResponse.statusText
                 }
 
                 // LOG('Retreiving WeatherData')
-                const weatherData = await response.json()
+                const weatherData = await currentDataResponse.json()
 
                 // LOG('Splitting Data into Objects [Object Destructuring]')
                 let temp_data, perc_data, wind_data, cloud_data
@@ -60,14 +67,29 @@
             }
         }
 
-        init()
+        function selectOption() {
+            console.log("Testing")
+            let selectedValue = dropdown.options[dropdown.selectedIndex].text
+            init(selectedValue)
+        }
 
+        window.selectOption = selectOption
+
+        const dropdown = document.getElementById('dropdown')
+        dropdown.addEventListener('change', selectOption)
+
+        init()
     </script>
 </head>
 
 <body onload="init()">
     <div id='base'>
-        <h1>Weather</h1>
+        <h1>Current Weather</h1>
+        <select id="dropdown" onchange="selectOption()">
+            <option selected>Aarhus</option>
+            <option>Horsens</option>
+            <option>Copenhagen</option>
+        </select>
         <table id='weather'>
             <thead>
                 <tr>
@@ -78,7 +100,29 @@
             </thead>
             <tbody id='weather_data'></tbody>
         </table>
-        <p id='error_messages'>
+        <p id='error_messages' />
+        <h1>Forecast for next 24 hours</h1>
+        <table id='forecast'>
+            <thead>
+                <tr>
+                    <td>Temperature</td>
+                    <td>Wind</td>
+                    <td>Cloud Coverage</td>
+                    <td>Rain</td>
+                </tr>
+            </thead>
+        </table>
+        <!--<h1>Last 24 hours</h1>
+    <table id='last_day_data'>
+        <thead>
+        <tr>
+        <td>Min Temp</td>
+        <td>Max Temp</td>
+        <td>Total precipitation</td>
+        <td>Average windspeed</td>
+        </tr>
+        </thead>
+    </table>-->
     </div>
 
 </body>
