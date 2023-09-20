@@ -30,8 +30,34 @@ function fetchWeatherData(city) {
   fetch(apiUrl)
     .then((response) => response.json())
     .then((data) => {
-      const jsonString = JSON.stringify(data, undefined, 4);
-      forecast.textContent = jsonString;
+      // const jsonString = JSON.stringify(data, undefined, 4);
+      // forecast.textContent = jsonString;
+
+      function generateWeatherRows() {
+        return data.map(item => {
+            let details = "";
+
+            if (item.type === "precipitation") {
+                details = "Precipitation Types: " + item.precipitation_types.join(", ");
+            } else if (item.type === "wind speed") {
+                details = "Wind Directions: " + item.directions.join(", ");
+            }
+
+            return `
+                <tr>
+                    <td>${item.type}</td>
+                    <td>${item.time}</td>
+                    <td>${item.unit}</td>
+                    <td>${item.from}</td>
+                    <td>${item.to}</td>
+                    <td>${details}</td>
+                </tr>
+            `;
+        }).join("");
+    }
+
+    // Insert weather data into the table
+    document.getElementById("weatherData").innerHTML = generateWeatherRows(data);
     })
     .catch((error) => console.error("Error fetching forecast data:", error));
 }
