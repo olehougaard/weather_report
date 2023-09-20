@@ -113,6 +113,77 @@
             init(selectedValue)
         }
 
+
+        //Very bad PostData function
+        function PostData() {
+            // Get values from input fields
+            var temperatureValue = document.getElementById('temperature').value;
+            var windValue = document.getElementById('wind').value;
+            var rainValue = document.getElementById('rain').value;
+
+            // Create a JavaScript object in the desired format
+            var postData = [
+                {
+                    "type": "temperature",
+                    "time": new Date().toISOString(),
+                    "place": dropdown.options[dropdown.selectedIndex].text,
+                    "value": parseFloat(temperatureValue),
+                    "unit": "C"
+                },
+                {
+                    "type": "precipitation",
+                    "time": new Date().toISOString(),
+                    "place": dropdown.options[dropdown.selectedIndex].text,
+                    "value": parseFloat(rainValue),
+                    "unit": "mm",
+                    "precipitation_type": "rain"
+                },
+                {
+                    "type": "wind speed",
+                    "time": new Date().toISOString(),
+                    "place": dropdown.options[dropdown.selectedIndex].text,
+                    "value": parseFloat(windValue),
+                    "unit": "m/s",
+                    "direction": "North"
+                },
+                {
+                    "type": "cloud coverage",
+                    "time": new Date().toISOString(),
+                    "place": dropdown.options[dropdown.selectedIndex].text,
+                    "value": 100,
+                    "unit": "%"
+                }
+            ];
+
+            // Convert the JavaScript object to JSON
+            var postDataJSON = JSON.stringify(postData);
+
+            // Make a POST request to the endpoint
+            fetch('http://localhost:8080/data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: postDataJSON
+            })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Data posted successfully.');
+                    } else {
+                        console.error('Failed to post data.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+
+            console.log(postData)
+        }
+
+        // Attach the PostData function to the button click event
+        var postButton = document.getElementById('postButton');
+        postButton.addEventListener('click', PostData);
+
         window.selectOption = selectOption
 
         const dropdown = document.getElementById('dropdown')
@@ -125,12 +196,14 @@
 
 <body onload="init()">
     <div id='base'>
-        <h1>Current Weather</h1>
+
         <select id="dropdown" onchange="selectOption()">
             <option selected>Aarhus</option>
             <option>Horsens</option>
             <option>Copenhagen</option>
         </select>
+
+        <h1>Current Weather</h1>
 
         <!-- Current Weather -->
         <table id='weather'>
@@ -175,17 +248,48 @@
             </tbody>
         </table>
 
-        <!--<h1>Last 24 hours</h1>
-            <table id='last_day_data'>
-                <thead>
-                    <tr>
-                        <td>Min Temp</td>
-                        <td>Max Temp</td>
-                        <td>Total precipitation</td>
-                        <td>Average windspeed</td>
-                    </tr>
-                </thead>
-            </table>-->
+        <h1>Post some new weather data for </h1>
+        <!-- Post new data -->
+        <table id='weather'>
+            <thead>
+                <tr>
+                    <td>
+                        <pre> Temperature </pre>
+                    </td>
+                    <td>
+                        <pre>    Wind     </pre>
+                    </td>
+                    <td>
+                        <pre>    Rain     </pre>
+                    </td>
+                </tr>
+            </thead>
+            <tbody id='weather_data'>
+                <tr>
+                    <td>
+                        <input type="text" id="temperature" name="temperature" pattern="\d*">
+                        <span>&deg;C</span>
+                    </td>
+                    <td>
+                        <input type="text" id="wind" name="wind" pattern="\d*">
+                        <span>m/s</span>
+                    </td>
+                    <td>
+                        <input type="text" id="rain" name="rain" pattern="\d*">
+                        <span>mm</span>
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3">
+                        <button id="postButton">Post Data</button>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+
+
         <p id='error_messages' />
     </div>
 
