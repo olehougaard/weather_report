@@ -21,23 +21,35 @@
         const LOG = (msg) => console.log(msg)
 
         function displayCurrent(theView, temperature, percipitation, wind, cloud) {
+            // Create Current Weather Model
             const theModel = currentModel({ temperature, percipitation, wind, cloud })
+
+            // Get the Table where Current Weather is being shown
             const weatherTable = document.getElementById('weather_data');
+
             //Clear existing rows
             while (weatherTable.firstChild) {
                 weatherTable.removeChild(weatherTable.firstChild);
             }
+
+            // Update Current Weather
             theView.updateCurrent(theModel)
         }
 
         function displayForecast(theView, temperature, percipitation, wind, cloud) {
-            const theModel = forecastModel({ temperature, percipitation, wind, cloud })
-            const forecastTable = document.getElementById('forecast');
+            // Create Forecast Model
+            const f_model = forecastModel({ temperature, percipitation, wind, cloud })
+
+            // Get the Table where Forecasts are shown
+            const forecastTable = document.getElementById('forecast_data');
+
             //Clear existing rows
             while (forecastTable.firstChild) {
-                forecastTable.removeChild(forecastTable.firstChild);
+              forecastTable.removeChild(forecastTable.firstChild);
             }
-            theView.updateForecast(theModel)
+
+            // Update Forecast
+            theView.updateForecast(f_model)
         }
 
         //Hardcoded value for Aarhus is not a great solution, but it is our solution.
@@ -48,6 +60,7 @@
             const theView = view(window)
 
             try {
+                // [SelectedValue = City] >:)
                 getCurrentWeather(selectedValue, theView)
                 getForecast(selectedValue, theView)
             }
@@ -81,25 +94,17 @@
         }
 
         async function getForecast(city, theView) {
-            // LOG('Fetching LocalHost:8080/data')
-            const forecastResponse = await fetch('http://localhost:8080/forecast' + '/' + city)
-
-
-            // LOG('Checking Response')
+            const forecastResponse = await fetch(`http://localhost:8080/forecast/${city}`)
             if (!forecastResponse.ok) {
                 LOG('Response was not OK')
                 throw forecastResponse.statusText
             }
 
-            // LOG('Retreiving WeatherData')
-            const weatherData = await forecastResponse.json()
+            const forecastJson = await forecastResponse.json()
 
-            // LOG('Splitting Data into Objects [Object Destructuring]')
             let temp_data, perc_data, wind_data, cloud_data
-            [temp_data, perc_data, wind_data, cloud_data] = weatherData
-            //LOG(`T: ${temperature.type}\nN: ${percipitation.type}\nW: ${wind_speed.type}\nC: ${cloud_coverage.type}`)
+            [temp_data, perc_data, wind_data, cloud_data] = forecastJson
 
-            LOG('Attempt to display data')
             displayForecast(theView, temp_data, perc_data, wind_data, cloud_data)
         }
 
@@ -126,39 +131,48 @@
             <option>Horsens</option>
             <option>Copenhagen</option>
         </select>
+
+        <!-- Current Weather -->
         <table id='weather'>
             <thead>
                 <tr>
-                    <td>Temperature</td>
-                    <td>Wind</td>
-                    <td>Rain</td>
+                    <td><pre> Temperature </pre></td>
+                    <td><pre>    Wind     </pre></td>
+                    <td><pre>    Rain     </pre></td>
                 </tr>
             </thead>
             <tbody id='weather_data'></tbody>
         </table>
-        <p id='error_messages' />
+
+
         <h1>Forecast for next 24 hours</h1>
-        <table id='forecast'>
+
+        <!-- Forecast Data -->
+        <table id="forecast">
             <thead>
                 <tr>
-                    <td>Temperature</td>
-                    <td>Wind</td>
-                    <td>Cloud Coverage</td>
-                    <td>Rain</td>
+                    <td><pre>  Temperature   </pre></td>
+                    <td><pre>      Wind      </pre></td>
+                    <td><pre> Cloud Coverage </pre></td>
+                    <td><pre>      Rain      </pre></td>
                 </tr>
             </thead>
+            <tbody id="forecast_data">
+            </tbody>
         </table>
+
         <!--<h1>Last 24 hours</h1>
-    <table id='last_day_data'>
-        <thead>
-        <tr>
-        <td>Min Temp</td>
-        <td>Max Temp</td>
-        <td>Total precipitation</td>
-        <td>Average windspeed</td>
-        </tr>
-        </thead>
-    </table>-->
+            <table id='last_day_data'>
+                <thead>
+                    <tr>
+                        <td>Min Temp</td>
+                        <td>Max Temp</td>
+                        <td>Total precipitation</td>
+                        <td>Average windspeed</td>
+                    </tr>
+                </thead>
+            </table>-->
+        <p id='error_messages' />
     </div>
 
 </body>
