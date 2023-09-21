@@ -53,6 +53,22 @@
             theView.updateForecast(forecastWeatherModel)
         }
 
+        function displayPastDay(theView, minTemp, maxTemp, totalRainfall, averageWindspeed) {
+            // Create Current Weather Model
+            const currentWeatherModel = currentModel({ minTemp, maxTemp, totalRainfall, averageWindspeed })
+
+            // Get the Table where Current Weather is being shown
+            const weatherTable = document.getElementById('weather_data');
+
+            //Clear existing rows
+            while (weatherTable.firstChild) {
+                weatherTable.removeChild(weatherTable.firstChild);
+            }
+
+            // Update Current Weather
+            theView.updateCurrent(currentWeatherModel)
+        }
+
         //Hardcoded value for Aarhus is not a great solution, but it is our solution.
         window.init = async function (selectedValue = 'Aarhus') {
             // Debugging Purposes
@@ -75,7 +91,12 @@
 
         async function getCurrentWeather(city, theView) {
             // LOG('Fetching LocalHost:8080/data')
-            const currentDataResponse = await fetch('http://localhost:8080/data' + '/' + city)
+            const currentDataResponse = await fetch(`http://localhost:8080/data/${city}`)
+
+            let minTemp = undefined;
+            let maxTemp = undefined;
+            let totalRainfall = 0;
+            let averageWindspeed = 0;
 
 
             // LOG('Checking Response')
@@ -88,11 +109,37 @@
             const weatherData = await currentDataResponse.json()
 
             // LOG('Splitting Data into Objects [Object Destructuring]')
-            let [temp_data, perc_data, wind_data, cloud_data] = weatherData
+            let [temp_data, perc_data, wind_data, cloud_data] = weatherData.slice(-4)
+
+            // Forloop for getting the last 24 hours in numbers 
+            for (let i = -4; i >= -96; i -= 4) {
+                let [temp_data, perc_data, wind_data] = weatherData.slice(i)
+                if (minTemp === undefined) {
+                    minTemp = temp_data.value
+                }
+                else {
+                    temp_data.value < minTemp ? minTemp = temp_data.value : minTemp = minTemp
+                }
+                if (maxTemp === undefined) {
+                    maxTemp = temp_data.value
+                }
+                else {
+                    temp_data.value > maxTemp ? maxTemp = temp_data.value : maxTemp = maxTemp
+                }
+                totalRainfall = totalRainfall + perc_data.value
+                averageWindspeed += wind_data.value
+            }
+
+            averageWindspeed = wind_data.value / 20;
+
+            console.log(minTemp, maxTemp, totalRainfall, averageWindspeed)
+
             // LOG(`T: ${temperature.type}\nN: ${percipitation.type}\nW: ${wind_speed.type}\nC: ${cloud_coverage.type}`)
 
             LOG('Attempt to display data')
+            console.log(weatherData)
             displayCurrent(theView, temp_data, perc_data, wind_data, cloud_data)
+            //displayPastDay(theView, minTemp, maxTemp, totalRainfall, averageWindspeed)
         }
 
         async function getForecast(city, theView) {
@@ -181,7 +228,7 @@
                     console.error('Error:', error);
                 });
 
-            console.log(postData)
+            init()
         }
 
         // Attach the PostData function to the button click event
@@ -247,6 +294,29 @@
                 </tr>
             </thead>
             <tbody id="forecast_data">
+            </tbody>
+        </table>
+
+        <h1>Last day in numbers</h1>
+        <!-- Stats tables -->
+        <table id='past24hours'>
+            <thead>
+                <tr>
+                    <td>
+                        <pre> Min Temperature </pre>
+                    </td>
+                    <td>
+                        <pre>    Max Temperature     </pre>
+                    </td>
+                    <td>
+                        <pre>    Total Rainfall     </pre>
+                    </td>
+                    <td>
+                        <pre>    Average Windspeed     </pre>
+                    </td>
+                </tr>
+            </thead>
+            <tbody id='past_24_hours'>
             </tbody>
         </table>
 

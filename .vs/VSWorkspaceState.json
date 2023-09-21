@@ -1,6 +1,10 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\model",
+    "\\static",
+    "\\util"
   ],
+  "SelectedNode": "\\static\\index.html",
   "PreviewInSolutionExplorer": false
 }
